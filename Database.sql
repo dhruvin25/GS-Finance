@@ -193,3 +193,17 @@ CREATE TABLE InsolvencyServices (
     ServiceType VARCHAR(50),
     Status VARCHAR(20)
 );
+
+-- 11. IndividualServices Table (IndividualServices)
+CREATE TABLE IndividualServices (
+    IndividualID INT PRIMARY KEY,
+    IndividualTax TINYINT(1),
+    BusinessTax TINYINT(1),
+    BusinessRegistration TINYINT(1),
+    Consulting TINYINT(1),
+    Insolvency TINYINT(1),
+    Insurance TINYINT(1),
+    Investments TINYINT(1),
+    Mortgage TINYINT(1),
+    Others TINYINT(1)
+);
