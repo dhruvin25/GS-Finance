@@ -11,6 +11,7 @@ CREATE TABLE Individuals (
     LastName VARCHAR(100),
     SIN CHAR(9),
     DateOfBirth DATE,
+    Relation VARCHAR(50),
     ResidentStatus VARCHAR(20),
     ArrivalDate DATE,
     SourceOfIncome VARCHAR(50),
