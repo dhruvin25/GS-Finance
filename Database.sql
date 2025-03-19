@@ -86,8 +86,7 @@ CREATE TABLE InvestmentAccounts (
 
 -- 5. InsurancePolicies Table (InsurancePolicies)
 CREATE TABLE InsurancePolicies (
-    PolicyID INT AUTO_INCREMENT PRIMARY KEY,
-    IndividualID INT NOT NULL,
+    IndividualID AUTO_INCREMENT PRIMARY KEY,
     PolicyType VARCHAR(50),
     FaceAmount DECIMAL(12,2),
     Term VARCHAR(20),
