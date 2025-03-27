@@ -1,63 +1,104 @@
--- 1. Families Table (Primary)
+-- 1. Families Table (Created First)
 CREATE TABLE Families (
-    FamilyID INT AUTO_INCREMENT PRIMARY KEY,
-    HeadOfFamily INT UNIQUE, -- One Individual as the head
-    FOREIGN KEY (HeadOfFamily) REFERENCES Individuals(IndividualID) ON DELETE SET NULL
+    FamilyID INT IDENTITY(1,1) PRIMARY KEY
 );
 
--- 2. Individuals Table
+-- 2. BusinessClients Table
+CREATE TABLE BusinessClients (
+    BusinessID INT IDENTITY(1,1) PRIMARY KEY,
+    BusinessName VARCHAR(100) NOT NULL,
+    CustomerStatus VARCHAR(10) NOT NULL,
+    RegistrationType VARCHAR(30) NOT NULL,
+    Activity VARCHAR(50) NOT NULL,
+    DirectorName VARCHAR(100) NOT NULL,
+    IncorporationNumber VARCHAR(50) NOT NULL,
+    RegistrationDate DATE NOT NULL,
+    AnnualFilingMonth VARCHAR(20) NOT NULL,
+    BusinessNumber VARCHAR(15) NOT NULL,
+    Online BIT NOT NULL,
+    CRA_AccessCode VARCHAR(20) NULL,
+    HST_Frequency VARCHAR(10) NULL,
+    WSIB_Frequency VARCHAR(10) NULL,
+    Payroll_Frequency VARCHAR(10) NULL,
+    PaystubFrequency VARCHAR(10) NULL,
+    T4Service BIT NOT NULL,
+    BookkeepingService VARCHAR(10) NULL,
+    ROE_Service BIT NOT NULL,
+    StreetAddress VARCHAR(100) NOT NULL,
+    City VARCHAR(50) NOT NULL,
+    Province VARCHAR(50) NOT NULL,
+    PostalCode VARCHAR(10) NOT NULL,
+    PhoneNumber VARCHAR(15) NOT NULL,
+    EmailAddress VARCHAR(100) NOT NULL,
+    Fax VARCHAR(15) NULL,
+    Website VARCHAR(100) NULL,
+    LinkedIn VARCHAR(100) NULL,
+    Instagram VARCHAR(100) NULL,
+    Facebook VARCHAR(100) NULL,
+    TikTok VARCHAR(100) NULL,
+    YouTube VARCHAR(100) NULL,
+    DocumentsLink VARCHAR(255) NULL
+);
+
+-- 3. Individuals Table (Includes FamilyID and BusinessID)
 CREATE TABLE Individuals (
-    IndividualID INT AUTO_INCREMENT PRIMARY KEY,
-    BusinessID INT NULL, -- Nullable as not all individuals belong to a business
-    FamilyID INT NULL, 
-    EmployerType VARCHAR(50),
+    IndividualID INT IDENTITY(1,1) PRIMARY KEY,
+    BusinessID INT NULL,
+    FamilyID INT NULL,
+    EmployerType VARCHAR(50) NULL,
     FirstName VARCHAR(100) NOT NULL,
     LastName VARCHAR(100) NOT NULL,
-    SIN VARCHAR(11) UNIQUE,
+    SIN CHAR(9) NOT NULL UNIQUE,
     DateOfBirth DATE NOT NULL,
-    Relation VARCHAR(50),
-    ResidentStatus VARCHAR(20),
+    Relation VARCHAR(50) NOT NULL,
+    ResidentStatus VARCHAR(20) NOT NULL,
     ArrivalDate DATE NULL,
-    SourceOfIncome VARCHAR(50),
-    YearlyIncome DECIMAL(12,2),
-    Occupation VARCHAR(50),
-    EmployerOrSchool VARCHAR(100),
-    StreetAddress VARCHAR(100),
-    City VARCHAR(50),
-    Province VARCHAR(50),
-    PostalCode VARCHAR(10),
-    Phone VARCHAR(15) UNIQUE,
-    Email VARCHAR(100) UNIQUE,
-    MaritalStatus VARCHAR(20),
-    Dependants INT DEFAULT 0,
-    Website VARCHAR(100),
-    LinkedIn VARCHAR(100),
-    Instagram VARCHAR(100),
-    Facebook VARCHAR(100),
-    TikTok VARCHAR(100),
-    YouTube VARCHAR(100),
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (FamilyID) REFERENCES Families(FamilyID) ON DELETE SET NULL
+    SourceOfIncome VARCHAR(50) NOT NULL,
+    YearlyIncome DECIMAL(12,2) NULL,
+    Occupation VARCHAR(50) NULL,
+    EmployerOrSchool VARCHAR(100) NULL,
+    StreetAddress VARCHAR(100) NOT NULL,
+    City VARCHAR(50) NOT NULL,
+    Province VARCHAR(50) NOT NULL,
+    PostalCode VARCHAR(10) NOT NULL,
+    Phone VARCHAR(15) NOT NULL,
+    Email VARCHAR(100) NULL,
+    MaritalStatus VARCHAR(20) NULL,
+    Dependants INT NULL,
+    Website VARCHAR(100) NULL,
+    LinkedIn VARCHAR(100) NULL,
+    Instagram VARCHAR(100) NULL,
+    Facebook VARCHAR(100) NULL,
+    TikTok VARCHAR(100) NULL,
+    YouTube VARCHAR(100) NULL,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (FamilyID) REFERENCES Families(FamilyID) ON DELETE SET NULL,
+    FOREIGN KEY (BusinessID) REFERENCES BusinessClients(BusinessID) ON DELETE SET NULL
 );
 
--- 3. Mortgages Table
+-- Now, Add HeadOfFamily to Families
+ALTER TABLE Families 
+ADD HeadOfFamily INT NULL,
+FOREIGN KEY (HeadOfFamily) REFERENCES Individuals(IndividualID) ON DELETE SET NULL;
+
+-- 4. Mortgages Table (Mortgages)
 CREATE TABLE Mortgages (
-    MortgageID INT AUTO_INCREMENT PRIMARY KEY,
+    MortgageID INT IDENTITY(1,1) PRIMARY KEY,
     IndividualID INT NOT NULL,
-    HomeOwner BOOLEAN DEFAULT FALSE,
+    HomeOwner BIT,
     Lender VARCHAR(100),
-    OutstandingBalance DECIMAL(12,2) DEFAULT 0,
+    OutstandingBalance DECIMAL(12,2),
     MarketValue DECIMAL(12,2),
     Term VARCHAR(20),
     InterestRate DECIMAL(5,2),
-    RenewalDate DATE NULL,
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    RenewalDate DATE,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE
 );
 
--- 4. InvestmentAccounts Table
+-- 5. InvestmentAccounts Table (InvestmentAccounts)
 CREATE TABLE InvestmentAccounts (
-    InvestmentID INT AUTO_INCREMENT PRIMARY KEY,
+    InvestmentID INT IDENTITY(1,1) PRIMARY KEY,
     IndividualID INT NOT NULL,
     InvestmentType VARCHAR(50),
     Amount DECIMAL(12,2),
@@ -66,9 +107,9 @@ CREATE TABLE InvestmentAccounts (
     FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE
 );
 
--- 5. InsurancePolicies Table
+-- 6. InsurancePolicies Table (InsurancePolicies)
 CREATE TABLE InsurancePolicies (
-    PolicyID INT AUTO_INCREMENT PRIMARY KEY,
+    PolicyID INT IDENTITY(1,1) PRIMARY KEY,
     IndividualID INT NOT NULL,
     PolicyType VARCHAR(50),
     FaceAmount DECIMAL(12,2),
@@ -78,112 +119,76 @@ CREATE TABLE InsurancePolicies (
     FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE
 );
 
--- 6. BusinessClients Table
-CREATE TABLE BusinessClients (
-    BusinessID INT AUTO_INCREMENT PRIMARY KEY,
-    BusinessName VARCHAR(100) NOT NULL,
-    CustomerStatus VARCHAR(20),
-    RegistrationType VARCHAR(30),
-    Activity VARCHAR(50),
-    DirectorName VARCHAR(100),
-    IncorporationNumber VARCHAR(50) UNIQUE,
-    RegistrationDate DATE NULL,
-    AnnualFilingMonth VARCHAR(20),
-    BusinessNumber VARCHAR(15) UNIQUE,
-    Online BOOLEAN DEFAULT FALSE,
-    CRA_AccessCode VARCHAR(20),
-    HST_Frequency VARCHAR(10),
-    WSIB_Frequency VARCHAR(10),
-    Payroll_Frequency VARCHAR(10),
-    PaystubFrequency VARCHAR(10),
-    T4Service BOOLEAN DEFAULT FALSE,
-    BookkeepingService VARCHAR(20),
-    ROE_Service BOOLEAN DEFAULT FALSE,
-    StreetAddress VARCHAR(100),
-    City VARCHAR(50),
-    Province VARCHAR(50),
-    PostalCode VARCHAR(10),
-    PhoneNumber VARCHAR(15) UNIQUE,
-    EmailAddress VARCHAR(100) UNIQUE,
-    Fax VARCHAR(15),
-    Website VARCHAR(100),
-    LinkedIn VARCHAR(100),
-    Instagram VARCHAR(100),
-    Facebook VARCHAR(100),
-    TikTok VARCHAR(100),
-    YouTube VARCHAR(100),
-    DocumentsLink VARCHAR(255)
-);
-
--- 7. BusinessShareholders Table (Many-to-Many)
+-- 7. BusinessShareholders Table (BusinessShareholders)
 CREATE TABLE BusinessShareholders (
-    BusinessShareholderID INT AUTO_INCREMENT PRIMARY KEY,
+    BusinessShareholderID INT IDENTITY(1,1) PRIMARY KEY,
     BusinessID INT NOT NULL,
     IndividualID INT NOT NULL,
     FOREIGN KEY (BusinessID) REFERENCES BusinessClients(BusinessID) ON DELETE CASCADE,
     FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE
 );
 
--- 8. BusinessServices Table
-CREATE TABLE BusinessServices (
-    BusinessServiceID INT AUTO_INCREMENT PRIMARY KEY,
-    BusinessID INT NOT NULL,
-    HST BOOLEAN DEFAULT FALSE,
-    HST_DueDate DATE NULL,
-    WSIB BOOLEAN DEFAULT FALSE,
-    WSIB_DueDate DATE NULL,
-    Payroll BOOLEAN DEFAULT FALSE,
-    Payroll_DueDate DATE NULL,
-    Paystubs BOOLEAN DEFAULT FALSE,
-    Paystubs_Date DATE NULL,
-    T4 BOOLEAN DEFAULT FALSE,
-    T4_DueDate DATE NULL,
-    CRA_Notes TEXT,
-    Corporate_Notes TEXT,
-    Client_Notes TEXT,
-    LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    LastUpdatedBy INT NULL,
-    FOREIGN KEY (BusinessID) REFERENCES BusinessClients(BusinessID) ON DELETE CASCADE
-);
-
--- 9. Employees Table
+-- 8. Employees Table (Employees)
 CREATE TABLE Employees (
-    EmployeeID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(100) NOT NULL,
-    LastName VARCHAR(100) NOT NULL,
-    Phone VARCHAR(15) UNIQUE,
-    Email VARCHAR(100) UNIQUE,
+    EmployeeID INT IDENTITY(1,1) PRIMARY KEY,
+    FirstName VARCHAR(100),
+    LastName VARCHAR(100),
+    Phone VARCHAR(15),
+    Email VARCHAR(100),
     StreetAddress VARCHAR(100),
     City VARCHAR(50),
     Province VARCHAR(50),
     PostalCode VARCHAR(10),
     JobTitle VARCHAR(50),
     Department VARCHAR(50),
-    DateOfJoining DATE NOT NULL,
-    Status VARCHAR(20) DEFAULT 'Active'
+    DateOfJoining DATE,
+    Status VARCHAR(20)
 );
 
--- 10. InsolvencyServices Table
+-- 9. BusinessServices Table (BusinessServices)
+CREATE TABLE BusinessServices (
+    BusinessServiceID INT IDENTITY(1,1) PRIMARY KEY,
+    BusinessID INT NOT NULL,
+    HST BIT,
+    HST_DueDate DATE,
+    WSIB BIT,
+    WSIB_DueDate DATE,
+    Payroll BIT,
+    Payroll_DueDate DATE,
+    Paystubs BIT,
+    Paystubs_Date DATE,
+    T4 BIT,
+    T4_DueDate DATE,
+    CRA_Notes TEXT,
+    Corporate_Notes TEXT,
+    Client_Notes TEXT,
+    LastUpdated DATE,
+    LastUpdatedBy INT,
+    FOREIGN KEY (BusinessID) REFERENCES BusinessClients(BusinessID) ON DELETE CASCADE,
+	FOREIGN KEY (LastUpdatedBy) REFERENCES Employees(EmployeeID) ON DELETE SET NULL
+);
+
+-- 10. InsolvencyServices Table (InsolvencyServices)
 CREATE TABLE InsolvencyServices (
-    InsolvencyServiceID INT AUTO_INCREMENT PRIMARY KEY,
+    InsolvencyServiceID INT IDENTITY(1,1) PRIMARY KEY,
     IndividualID INT NOT NULL,
     ServiceType VARCHAR(50),
     Status VARCHAR(20),
     FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE
 );
 
--- 11. IndividualServices Table
+-- 11. IndividualServices Table (IndividualServices)
 CREATE TABLE IndividualServices (
-    IndividualServiceID INT AUTO_INCREMENT PRIMARY KEY,
+    IndividualServiceID INT IDENTITY(1,1) PRIMARY KEY,
     IndividualID INT NOT NULL,
-    IndividualTax BOOLEAN DEFAULT FALSE,
-    BusinessTax BOOLEAN DEFAULT FALSE,
-    BusinessRegistration BOOLEAN DEFAULT FALSE,
-    Consulting BOOLEAN DEFAULT FALSE,
-    Insolvency BOOLEAN DEFAULT FALSE,
-    Insurance BOOLEAN DEFAULT FALSE,
-    Investments BOOLEAN DEFAULT FALSE,
-    Mortgage BOOLEAN DEFAULT FALSE,
-    Others BOOLEAN DEFAULT FALSE,
+    IndividualTax BIT,
+    BusinessTax BIT,
+    BusinessRegistration BIT,
+    Consulting BIT,
+    Insolvency BIT,
+    Insurance BIT,
+    Investments BIT,
+    Mortgage BIT,
+    Others BIT,
     FOREIGN KEY (IndividualID) REFERENCES Individuals(IndividualID) ON DELETE CASCADE
 );
